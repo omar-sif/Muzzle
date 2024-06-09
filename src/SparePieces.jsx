@@ -1,11 +1,10 @@
 
 
-
 function Piece({piece, id}){
 
 
     return (
-        <div className="piece" id={id} style={{margin:'auto'}}>{piece}</div>
+        <div className="piece" id={id} style={{margin:'auto'}}> {piece} </div>
     )
 };
 
