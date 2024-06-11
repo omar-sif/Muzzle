@@ -40,3 +40,50 @@
 .read-the-docs {
   color: #888;
 }
+
+.piece{
+  background-size: cover;
+}
+
+
+.game-container{
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.board-container{
+  width: 600px;
+  height: 600px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  order: 2 
+  
+}
+
+.buttons-container{
+  display: inline;
+}
+
+.buttons-container button{
+  margin: auto;
+  background-color: gray;
+  order : 4
+}
+
+.spare-pieces{
+  background-color: darkgray;
+}
+
+.spare-pieces .piece{
+  width: 60px;
+  height : 60px
+}
+.top {
+  order: 1
+}
+.bottom{
+  order : 3
+}

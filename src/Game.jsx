@@ -5,6 +5,8 @@ import SparePieces from './SparePieces';
 import './assets/chessground.base.css'
 import './assets/chessground.brown.css'
 import './assets/chessground.cburnett.css'
+import { dropNewPiece } from 'chessground/board';
+import './App.css';
 
 export default function Game() {
 
@@ -26,10 +28,16 @@ export default function Game() {
     
     const handleClick = (e)=>{
         if(board){
+            board.stop();
             const piece = e.target.id;
+            const cursorImage = e.target.style.backgroundImage;
+            console.log(cursorImage)
             const cgPiece = {role: role[piece.toLowerCase().split("")[1]], color: color[piece[0]==='w'?0:1]};
             board.dragNewPiece(cgPiece, e, true);
             draggedPiece.current = cgPiece;
+            document.body.style.cursor = cursorImage;
+            document.querySelector('cg-board').style.cursor = cursorImage; // Change cursor to pointer for the chessboard
+
         }
         else{
             console.log('board not ready')
@@ -38,9 +46,10 @@ export default function Game() {
 
     const handleDrop = (e)=>{
 
-        if(board){
+        if(board && draggedPiece.current!== null){
             const square = board.getKeyAtDomPos([e.clientX, e.clientY]);
             board.setPieces(new Map([...board.state.pieces, [square, draggedPiece.current]]));
+            board.dragNewPiece(draggedPiece.current, e ,true)
         }
 
         }
@@ -75,6 +84,9 @@ export default function Game() {
                 enabled: true,
                 duration: 200
             },
+            events:{
+                dropNewPiece: (piece, key)=>{console.log(`${piece} dropped at ${key}`)}
+            }
             
         };
         const board = Chessground(boardRef.current, config);
@@ -84,12 +96,19 @@ export default function Game() {
     }, [])
 
     return (
-        <div className='game-container' style={{width:'400px', height:'400px'}}>
-            <SparePieces handleClick={handleClick}/>
-            <div style={{width:'80%', height:'80%'}} ref={boardRef} onClick={handleDrop} />
-            <button onClick={(e)=>{board.set({fen: 'start'})}} style={{backgroundColor:'gray'}} >Reset</button>
-            <button onClick={shuffleBoard} style={{backgroundColor:'gray'}} >Shuffle</button>
-            <button onClick={validateBoard} >Validate</button>
+        <div className='game-container' >
+            <div className='spare-pieces-container top'>
+            <SparePieces handleClick={handleClick} color={'white'}/>
+            </div>
+            <div className='board-container' ref={boardRef} onClick={handleDrop} />
+            <div className='spare-pieces-container bottom'>
+            <SparePieces handleClick={handleClick} color={'black'} />
+            </div>
+            <div className='buttons-container'>
+                <button onClick={()=>{board.set({fen: 'start'})}}  >Reset</button>
+                <button onClick={shuffleBoard}  >Shuffle</button>
+                <button onClick={validateBoard} >Validate</button>
+            </div>
         </div>
     )
 
