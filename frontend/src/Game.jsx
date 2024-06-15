@@ -5,8 +5,8 @@ import SparePieces from './SparePieces';
 import './assets/chessground.base.css'
 import './assets/chessground.brown.css'
 import './assets/chessground.cburnett.css'
-import { dropNewPiece } from 'chessground/board';
 import './App.css';
+import axios from 'axios';
 
 export default function Game() {
 
@@ -54,6 +54,7 @@ export default function Game() {
 
         }
 
+    // Shuffles the board by removing random pieces
     const shuffleBoard = ()=>{
         const pieces = board.state.pieces;
         let pieceMap = new Map();
@@ -67,14 +68,32 @@ export default function Game() {
         // setFen(board.getfen())
     }
 
+    // Validates the answer, new fen is fetched after every validation
     const validateBoard= ()=>{
         const answer = board.getFen();
+        
         if (answer === fen){
             console.log('Correct')
+            
         }
         else{
             console.log('incorrect');
         }
+        fetchFen();
+    }
+
+    // Fetches a new fen from the backend
+    const fetchFen = async ()=>{
+        try{
+            const response = await axios.get('http://localhost:3000/');
+            const newFen = await response.data[0].fen;
+            console.log(newFen) 
+            setFen(newFen);
+        }catch(err){
+            console.log(err)
+        }
+        
+    
     }
 
     useEffect(()=>{
@@ -84,16 +103,13 @@ export default function Game() {
                 enabled: true,
                 duration: 200
             },
-            events:{
-                dropNewPiece: (piece, key)=>{console.log(`${piece} dropped at ${key}`)}
-            }
-            
+
         };
         const board = Chessground(boardRef.current, config);
         setBoard(board);
 
         return ()=> board.destroy()
-    }, [])
+    }, [fen])
 
     return (
         <div className='game-container' >
