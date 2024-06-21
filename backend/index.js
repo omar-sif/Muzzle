@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import memoRoutes from './routes/memo.js';
+import lineRoutes from './routes/viz.js';
 
 mongoose.Promise = global.Promise;
 const connectDB = async () => {
@@ -24,5 +25,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
 app.use('/', memoRoutes);
+app.use('/', lineRoutes);
+
 
 
