@@ -14,6 +14,7 @@ export default function Viz(){
     const linesQueue = useRef([]);
     const cgBoard = useRef(null);
     const line = useRef(null);
+    const pieceToLetter = {'pawn': 'p', 'knight': 'n', 'bishop': 'b', 'rook': 'r', 'queen': 'q', 'king': 'k'}
 
 
 
@@ -51,12 +52,27 @@ export default function Viz(){
 
         if(begin && line.current){
             const moves = line.current.split(' ');
+            /*
+            // when pieces are moved, they are no longer in their original position, and consequently not found in 
+            board.state.pieces, here we keep track of the new positions of the moved pieces
+            */
+            let newPiecePositions = {}; //like {'e2':{role : 'pawn', color: 'white'}}
             let index = 0;
+            console.log(cgBoard.current.getFen())
+            console.log(line.current)
             const interval = setInterval(()=>{
 
                 if(index < moves.length){
                     
-                    setMove(moves[index]);
+                    
+                    const orig = moves[index].slice(0,2);
+                    const dest = moves[index].slice(2,4);
+                    const pieceObject = newPiecePositions[orig] || cgBoard.current.state.pieces.get(orig);
+                    console.log(pieceObject)
+                    newPiecePositions[orig] = '';
+                    newPiecePositions[dest] = pieceObject;
+                    const piece = pieceObject.color === 'white' ? pieceToLetter[pieceObject.role].toUpperCase() : pieceToLetter[pieceObject.role];
+                    setMove(piece + dest);
                     index++;
 
                 }
@@ -64,7 +80,7 @@ export default function Viz(){
                     clearInterval(interval);
                 }
 
-            }, 1500);
+            }, 3000);
 
             return ()=> {
                 clearInterval(interval);
